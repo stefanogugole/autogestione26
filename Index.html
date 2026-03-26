@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html>
+<head>
+  
+    <base target="_top" />
+    <style>
+      
+      body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    /* justify-content: flex-start; */
+    min-height: 100vh; /* Assicura che il body occupi almeno l'altezza della viewport */
+  }
+
+  #contenitorePrincipale {
+    flex-grow: 1; /* Permette al contenitore di espandersi */
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  th, td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left;
+  }
+
+  th {
+    background-color: #f2f2f2;
+  }
+
+  select {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #0073e6;
+    border-radius: 5px;
+    background: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  select:focus {
+    border-color: #005bb5;
+    outline: none;
+  }
+
+  button {
+    background-color: #0073e6;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+    display: block;
+    margin: 20px auto;
+  }
+
+  button:hover {
+    background-color: #005bb5;
+  }
+
+  #title {
+    margin-bottom: 30px;
+    font-weight: 600;
+    color: #005bb5;
+    font-size: 3.5vw;
+    text-align: center;
+  }
+
+  #pronto {
+    margin-top: 20px;
+    padding: 10px;
+    background: #eaf4ff;
+    border-left: 5px solid #0073e6;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+
+  div {
+    font-weight: 700;
+    margin-bottom: 15px;
+  }
+
+  @media (min-width: 700px) {
+    body {
+      padding: 100px;
+    }
+    #title {
+      font-size: 2vw;
+    }
+  }
+
+  @media (max-width: 600px) {
+    button {
+      font-size: 14px;
+      padding: 8px;
+    }
+  }
+
+
+  /* Il contenitore esterno */
+/*
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+*/
+/* Nascondiamo la checkbox originale */
+/*
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+*/
+  /* Lo sfondo del toggle (OFF) */
+  /*
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+  }
+*/
+  /* Il cerchietto bianco che si muove */
+  /*
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+  }
+*/
+  /* Colore quando è su ON */
+
+  /*
+  input:checked + .slider {
+    background-color: #2196F3;
+  }
+*/
+  /* Movimento del cerchietto su ON */
+/*
+  input:checked + .slider:before {
+    transform: translateX(26px);
+  }
+*/
+
+</style>
+</head>
+
+
+
+
+<body>
+  <div id="contenitorePrincipale">
+  <p id="title">
+    <span id="utente"></span>
+      scegli le attività autogestione <br />
+      <section style="opacity: 0.5; text-align: center; font-size: 1rem;">
+          (quelle che finiscono con una singola cifra indicano che l'attività dura 1
+          ora, quelle che finiscono con 2 cifre indicano che l'attività dura 2 ore).
+      </section>
+    </p>
+
+
+
+     <div id="divSelect1">
+        Martedì prima ora: <select id="mioSelect1"></select>
+     </div>
+
+     <div id="divSelect2" style="display: none;">
+        Martedì seconda ora: <select id="mioSelect2"  ></select>
+     </div> 
+     <div id="divSelect3" style="display: none;">
+        Mercoledì prima ora: <select id="mioSelect3"></select>
+     </div>
+
+     <div id="divSelect4" style="display: none;">
+        Mercoledì seconda ora: <select id="mioSelect4"  ></select>
+     </div> 
+
+     <div id="divBottone" style="display: none;"> 
+        <button id="bottone1">Invia scelte</button>
+        [ non sarà possibile cambiarle una volta inviate! ]
+     </div>
+
+<div id="pronto">
+Qui vengono pubblicati eventuali conferme o errori di invio.
+</div>
+
+</div>
+
+<div id="webmaster">
+</div>
+
+<div id="webmaster2">
+</div>
+
+
+
+
+
+
+
+
+    <script>
+      //Progetto aperto da biennio
+      //var user="";
+      //google.script.run.withFailureHandler(debug).withSuccessHandler(checkUser).getUser();  //serve solo a far apparire nomeutente nel titolo e la tabella per webmaster
+
+      //var isAdmin = <?= JSON.stringify(isAdmin) ?>;
+
+      var isAdmin=false;
+
+      var user = "<?= user ?>";
+      if ("riccardo.fantoniwebmasterstefano.gugole".includes(user)) {isAdmin=true};
+
+      
+      document.getElementById('utente').innerHTML="Benvenuto "+user+", ";
+      //if (user && "webmasterriccardo.fantonistefano.gugole".includes(user))
+      
+      console.log("Stato Admin:", isAdmin); // Controlla in console (F12) se è true o false
+      if (isAdmin) {
+        //document.getElementById('utente').innerHTML = "Benvenuto Admin " + user + ", ";
+        getTabella();
+      } 
+      else {
+          //document.getElementById('utente').innerHTML = "Benvenuto " + user + ", ";
+          // Se non è admin, non chiamare getTabella o chiamala con false
+      }
+
+      /*
+      function checkUser(utente)
+      {
+        user=utente;
+        document.getElementById('utente').innerHTML="Benvenuto "+user+", ";
+        if (user && "webmasterriccardo.fantonistefano.gugole".includes(user))
+          {
+            getTabella(true);
+          }
+      }
+      */
+      
+
+      //debug(user);
+
+      function debug(stringa)
+            {
+              document.getElementById('pronto').innerHTML=stringa; 
+              //Logger.log(stringa);
+            }
+
+      
+     
+    
+
+
+
+
+
+/*
+      google.script.run.withSuccessHandler(function(isManutenzione) {
+          
+          // 2. La logica di negazione va QUI dentro
+          if (!isManutenzione) {
+            console.log("La manutenzione è disattivata. Procedo...");
+            inizioFrontend();
+          } else {
+            console.log("Siamo in manutenzione!");
+            debug("Siamo in manutenzione");
+          }
+          
+        })
+        .getManutenzione(); // Funzione definita nel file .gs
+*/
+      if ("<?= isManutenzione ?>"=="1")
+      {
+        console.log("Siamo in manutenzione!");
+        debug("Siamo in manutenzione");   
+      }
+      else
+      {
+        console.log("La manutenzione è disattivata. Procedo...");
+        inizioFrontend();
+      }   
+
+
+
+
+
+
+
+function inizioFrontend()
+{
+    
+
+        
+          /*
+          function verificaUser(stringa)
+          {
+            if (stringa)    //l'utente è iscritto, c'è una property a nome suo
+            {
+              document.getElementById('pronto').innerHTML="Non sei nel posto giusto o hai già scelto i corsi ("+JSON.parse(stringa)[0]+","+JSON.parse(stringa)[1]+","+JSON.parse(stringa)[2]+","+JSON.parse(stringa)[3]+"). Se ci sono problemi, riprova più tardi. Se non risolvi, contatta il webmaster";  
+              
+            }
+            else
+            {
+              google.script.run.withFailureHandler(debug).withSuccessHandler(popolaSelect1).getPropsWithDigit(digit="1"); //il secondo form appare onchange del primo
+              
+            }
+            
+          }
+          google.script.run.withFailureHandler(debug).withSuccessHandler(verificaUser).testUser();
+
+          */
+
+          // Assign the template variable to a JS variable first
+          var corsiScelti = JSON.parse('<?= corsi ?>'); 
+          var giaCompilato = "<?= compilato ?>" === "true";
+          if (giaCompilato) {
+              document.getElementById('pronto').innerHTML = "Hai già scelto i corsi: (" + corsiScelti.join(" - ") + "</strong>";
+              document.getElementById('divSelect1').style.display = "none";
+          }
+          else{
+               var stringaCorsi = '<?= primoSelect ?>'; 
+                if (stringaCorsi && stringaCorsi !== "[]") {
+                  try {
+                    let datiCorsi = JSON.parse(stringaCorsi); 
+                    popolaSelect1(datiCorsi);
+                  } catch(e) {
+                    console.error("Errore parsing:", e);
+                  }
+                } else {
+                  debug("Attenzione: nessun corso disponibile o posti esauriti.");
+                }
+    }
+  }
+  
+
+
+      var scelte=["","","",""];
+      var numD=0; //conto quante attività D ho già
+      var select1 = document.getElementById("mioSelect1");
+      var select2 = document.getElementById("mioSelect2");
+      var select3 = document.getElementById("mioSelect3");
+      var select4 = document.getElementById("mioSelect4");
+
+      function popolaSelect1(voci) {
+        var select1 = document.getElementById("mioSelect1");
+        if(!select1) return;
+
+        while (select1.options.length > 0) { select1.remove(0); } //svuoto
+        //creo la prima voce nulla
+         var option = document.createElement('option');
+         option.value = "-"; // The value can be an empty string or a specific "null" value.
+         option.text = "-"; // The text is also empty.
+         select1.appendChild(option);
+        for (var i = 0; i < voci.length; i++) {
+          var option = document.createElement('option');  
+          option.value = voci[i];
+          option.text = voci[i];
+          select1.appendChild(option);
+        }
+      }
+
+      
+
+      
+      function popolaSelect2(voci) {      //non mettere le seconde ore di un corso o già scelta prima ora
+        //var select2 = document.getElementById("mioSelect2");
+        
+        let voce1=document.getElementById("mioSelect1").value;
+        numD=0;
+        if (voce1[0]=="D")
+        {
+          numD++;
+        }
+        voce1=voce1.substring(0,voce1.length-1);  //voce1 senza digit oppure voce1.replace(/\d+$/, "")
+        while (select2.options.length > 0) { select2.remove(0); }
+        var option = document.createElement('option');
+         option.value = "-"; // The value can be an empty string or a specific "null" value.
+         option.text = "-"; // The text is also empty.
+         select2.appendChild(option);
+        for (var i = 0; i < voci.length; i++) {
+
+          var option = document.createElement('option');  
+          option.value = voci[i];
+          option.text = voci[i];
+
+          //controlla se la property è a 0
+          let regex=new RegExp("12$","i");
+          if (voci[i].includes(voce1) || regex.test(voci[i])) //non finisce per singola cifra => dura due ore, oppure già scelta.
+          {
+              //faccio niente, non aggiungo corsi seconde ore
+          }
+          else{
+              
+              if (numD>0 && voci[i][0]=="D")
+              {}    //questa voce farebbe la seconda D e va tolta, troppe attività ludiche
+              else{
+                select2.appendChild(option);
+              }
+              
+          }
+
+          
+        }
+      }
+
+      function popolaSelect3(voci) {      //non mettere le seconde ore di un corso o già scelta prima ora
+        //var select2 = document.getElementById("mioSelect2");
+        
+        let voce1="";
+        let voce2="";
+        numD=0;
+        if (scelte[0])
+        {
+          voce1=scelte[0].substring(0,scelte[0].length-2);  //voce1 senza 2digit
+
+          if (voce1[0]=="D")
+          {
+            numD++;
+          }  
+        }
+        else
+        {
+          voce1="@";
+        }
+        if (scelte[1])
+        {
+          voce2=scelte[1].substring(0,scelte[1].length-2);  //voce2 senza 2digit
+          if (voce2[0]=="D")
+          {
+            numD++;
+          }  
+        }
+        else
+        {
+          voce2="@";
+        }  
+
+
+        while (select3.options.length > 0) { select3.remove(0); }
+        var option = document.createElement('option');
+         option.value = "-"; // The value can be an empty string or a specific "null" value.
+         option.text = "-"; // The text is also empty.
+       
+         select3.appendChild(option);
+        for (var i = 0; i < voci.length; i++) {
+
+          var option = document.createElement('option');  
+          option.value = voci[i];
+          option.text = voci[i];
+
+          //controlla se la property è a 0
+          if (voci[i].includes(voce1) || voci[i].includes(voce2) ) //non finisce per singola cifra => dura due ore, oppure già scelta.
+          {
+              //faccio niente, non aggiungo corsi seconde ore
+          }
+          else{
+              if (numD>0  && voci[i][0]=="D")
+              {}    //questa voce farebbe la seconda D e va tolta, troppe attività ludiche
+              else{
+                select3.appendChild(option);
+              }
+              
+          }
+
+          
+        }
+      }
+
+
+
+    function popolaSelect4(voci) {      //non mettere le seconde ore di un corso o già scelta prima ora
+        //var select2 = document.getElementById("mioSelect2");
+        let voce1="";
+        let voce2="";
+        let voce3="";
+        numD=0;
+        if (scelte[0])
+        {
+          voce1=scelte[0].substring(0,scelte[0].length-2);  //voce1 senza 2digit  
+          if (voce1[0]=="D")
+          {
+            numD++;
+          }
+        }
+        else
+        {
+          voce1="@";
+        }
+        if (scelte[1])
+        {
+          voce2=scelte[1].substring(0,scelte[1].length-2);  //voce2 senza 2digit  
+          if (voce2[0]=="D")
+          {
+            numD++;
+          }
+        }
+        else
+        {
+          voce2="@";
+        }  
+        if (scelte[2])
+        {
+          voce3=scelte[2].substring(0,scelte[2].length-2);  //voce2 senza 2digit 
+          if (voce3[0]=="D")
+          {
+            numD++;
+          } 
+        }
+        else
+        {
+          voce3="@";
+        }  
+
+        while (select4.options.length > 0) { select4.remove(0); }
+        var option = document.createElement('option');
+         option.value = "-"; // The value can be an empty string or a specific "null" value.
+         option.text = "-"; // The text is also empty.
+         select4.appendChild(option);
+        for (var i = 0; i < voci.length; i++) {
+
+          var option = document.createElement('option');  
+          option.value = voci[i];
+          option.text = voci[i];
+
+          //controlla se la property è a 0
+          let regex=new RegExp("34$","i");
+          if (voci[i].includes(voce1) || voci[i].includes(voce2) || voci[i].includes(voce3) || regex.test(voci[i])) //non finisce per singola cifra => dura due ore, oppure già scelta.
+          {
+              //faccio niente, non aggiungo corsi seconde ore
+          }
+          else{
+              if (numD>0  && voci[i][0]=="D")
+              {}    //questa voce farebbe la seconda D e va tolta, troppe attività ludiche
+              else{
+                select4.appendChild(option);
+              }
+              
+          }
+
+          
+        }
+      }
+
+
+
+
+
+
+      document.getElementById('mioSelect1').addEventListener("change", function(event) {
+          // Ottieni il valore selezionato
+          var selectedValue = event.target.value;
+
+          scelte[0]=selectedValue;  //se è 12, svuota il secondo select e la seconda scelta
+          scelte[1]="";
+          scelte[2]="";
+          scelte[3]="";
+
+
+          // Ottieni il testo dell'opzione selezionata
+          var selectedText = event.target.options[event.target.selectedIndex].text;
+
+          //let select2=document.getElementById("mioSelect2");  //già globale
+          while (select2.options.length > 0) { select2.remove(0); } //svuoto il select2
+          while (select3.options.length > 0) { select3.remove(0); }
+          while (select4.options.length > 0) { select4.remove(0); }
+          document.getElementById("divSelect2").style.display = "none";
+          document.getElementById("divSelect3").style.display = "none";
+          document.getElementById("divSelect4").style.display = "none";
+          document.getElementById("divBottone").style.display = "none";
+
+          //document.getElementById("divSelect3").style.display = "block";
+          //document.getElementById("divBottone").style.display = "block";
+
+          //pattern=""+digit+"$|"+digit+"(.)$";
+          
+          let regex=new RegExp("1$","i");
+          if (regex.test(selectedText)) //altrimenti ha scelto attività 12
+          {
+            document.getElementById("divSelect2").style.display = "block";
+            document.getElementById("divSelect3").style.display = "none";
+            document.getElementById("divSelect4").style.display = "none";
+            document.getElementById("divBottone").style.display = "none";
+            google.script.run.withSuccessHandler(popolaSelect2).getPropsWithDigit(digit="2"); //il secondo form appare onchange del primo
+          }
+          else{ //ha scelto 12
+            scelte[1]="";
+            document.getElementById("divSelect3").style.display = "block";
+            document.getElementById("divSelect4").style.display = "none";
+            document.getElementById("divBottone").style.display = "none";
+            google.script.run.withSuccessHandler(popolaSelect3).getPropsWithDigit(digit="3"); //il secondo form appare onchange del primo
+            //document.getElementById("bottone1").textContent="fissa attività primo giorno";
+          }
+
+      });
+
+      document.getElementById('mioSelect2').addEventListener("change", function(event) {
+          var selectedValue = event.target.value;
+          var selectedText = event.target.options[event.target.selectedIndex].text;
+          scelte[1]=selectedValue;
+          scelte[2]="";
+          scelte[3]="";
+          document.getElementById("divSelect3").style.display = "block";
+          document.getElementById("divSelect4").style.display = "none";
+          document.getElementById("divBottone").style.display = "none";
+          google.script.run.withSuccessHandler(popolaSelect3).getPropsWithDigit(digit="3"); //il secondo form appare onchange del primo
+          //document.getElementById("bottone1").textContent="fissa attività primo giorno";
+      });
+
+
+      document.getElementById('mioSelect3').addEventListener("change", function(event) {
+          var selectedValue = event.target.value;
+          var selectedText = event.target.options[event.target.selectedIndex].text;
+          scelte[2]=selectedValue;
+          scelte[3]="";
+          while (select4.options.length > 0) { select4.remove(0); }
+          document.getElementById("divSelect4").style.display = "none";
+          document.getElementById("divBottone").style.display = "none";
+
+
+          let regex=new RegExp("3$","i");
+          if (regex.test(selectedText)) //altrimenti ha scelto attività 34
+          {
+            document.getElementById("divSelect4").style.display = "block";
+            document.getElementById("divBottone").style.display = "none";
+            google.script.run.withSuccessHandler(popolaSelect4).getPropsWithDigit(digit="4"); //il secondo form appare onchange del primo
+          }
+          else{ //ha scelto 34
+            scelte[3]="";
+            document.getElementById("divBottone").style.display = "block";
+          }
+
+
+      });
+
+      document.getElementById('mioSelect4').addEventListener("change", function(event) {
+          var selectedValue = event.target.value;
+          var selectedText = event.target.options[event.target.selectedIndex].text;
+          scelte[3]=selectedValue;
+          document.getElementById("divBottone").style.display = "block";
+      });     
+      
+
+      function gestisciRisposta(stringa)
+      {
+        if (!stringa) //stringa è vuota
+        {
+          document.getElementById('pronto').innerHTML="Iscrizione effettuata a: 1-"+select1.value+" 2-"+select2.value+" 3-"+select3.value+" 4-"+select4.value;
+          select1.style.display = "none";
+          select2.style.display = "none";
+          select3.style.display = "none";
+          select4.style.display = "none";
+          document.getElementById("divBottone").style.display = "none";
+          //document.getElementById('pronto').innerHTML="Iscrizione effettuata. A presto";
+        }
+        else{
+          select1.style.display = "none";
+          select2.style.display = "none";
+          select3.style.display = "none";
+          select4.style.display = "none";
+          document.getElementById("divBottone").style.display = "none";
+          document.getElementById('pronto').innerHTML="Ciao, purtroppo "+stringa+". Aggiorna la pagina e riprova l'iscrizione";
+        }
+      }
+      function gestisciRispostaErr(stringa)
+      {
+        var userEmail = Session.getActiveUser().getEmail();
+        select1.style.display = "none";
+        select2.style.display = "none";
+        select3.style.display = "none";
+        select4.style.display = "none";
+        document.getElementById("divBottone").style.display = "none";
+        console.log("Errore con utente "+userEmail+" "+ stringa);
+        document.getElementById('pronto').innerHTML="Purtroppo qualcosa non sta funzionando. Più tardi, ricarica la pagina e riprova";
+      }
+
+      document.getElementById('bottone1').addEventListener('click', function() {
+        this.disabled = true;
+        this.style.backgroundColor="#ccc";
+        this.style.cursor="not-allowed";
+        document.getElementById('pronto').innerHTML="Attendi...";
+        google.script.run.withSuccessHandler(gestisciRisposta).withFailureHandler(gestisciRispostaErr).sendEmailFromWeb(scelte[0],scelte[1],scelte[2],scelte[3]);
+      });
+      
+
+/*
+      function gestisciRisposta(risposta) {
+        alert(risposta); // Mostra la risposta di Apps Script
+      }
+      */
+
+/*///////////////////////////////////////////////WEBMASTER
+ */
+    
+    
+    //alternativa al google script run per avere lo user e dare benvenuto a inizio script
+    //google.script.run.withSuccessHandler(getTabella).isWebmaster()
+    
+        function displayProperties(array) {
+          var keys = array[0];
+          var properties = array[1];
+          //var table='<label class="switch"><input type="checkbox" name="iscrizione_servizi"><span class="slider"></span></label><br><br>';
+          var table = table + '<table><thead><tr><th>Proprietà</th><th>Posti Totali</th></tr></thead><tbody>';
+
+          keys.forEach((elemento) => {
+            var data = JSON.parse(properties[elemento]);
+            
+            table += '<tr>';
+            table += '<td>' + elemento + '</td>';
+            // L'input chiama 'updateValue' quando l'admin preme invio o cambia focus
+            table += '<td><input type="number" value="' + data.n + '" onchange="updateValue(\'' + elemento + '\', this.value)"></td>';
+            //table += '<td>' + data.i + '</td>';
+            table += '</tr>';
+          });
+
+          //table += '<tr><td>ALUNNI</td><td colspan="2">' + properties["ALUNNI"] + '</td></tr>';
+          //table += '<tr><td>ALUNNI</td><td colspan="2"><textarea rows="5" style="width: 100%; box-sizing: border-box; padding: 8px; resize: vertical;" onchange="updateValueAlunni(\'ALUNNI\', this.value)">' + (properties["ALUNNI"] || "") + '</textarea></td></tr>';
+
+          table += '<tr><td>AAA_Manutenzione</td>';
+          table += '<td><input type="number" value="' + JSON.parse(properties["AAA_Manutenzione"]).n + '" onchange="updateValue(\'' + "AAA_Manutenzione" + '\', this.value)"></td>';
+          
+          
+          
+          table += '</tbody></table>';
+
+
+          document.getElementById('webmaster').innerHTML = table;
+        }
+    
+     function getTabella() //booleano true or false
+     { 
+      
+        google.script.run.withSuccessHandler(displayProperties).getPropertiesWebmaster();//parte con corsi
+        google.script.run
+            .withSuccessHandler(displayPropertiesUtenti)
+            .withFailureHandler(function(err) { console.error("Errore fetch proprietà:", err); })
+            .getPropsWithoutDigits(); // <-- Assicurati che questa funzione ritorni i dati corretti
+      
+     }
+
+     // Funzione di supporto per inviare i dati al backend
+        function updateValue(key, newValue) {
+          console.log("Aggiornamento " + key + " a " + newValue);
+          
+          // Opzionale: disabilita l'input o mostra un loader per feedback visivo
+          google.script.run.withSuccessHandler(function(res) {
+              alert("Posti per " + key + " aggiornati correttamente!");
+            }).withFailureHandler(function(err) {
+              alert("Errore durante l'aggiornamento: " + err);
+            }).adminUpdateSeats(key,newValue); // Chiamata al backend
+        }
+        /*
+      function updateValueAlunni(key, newValue) {
+          console.log("Aggiornamento " + key + " a " + newValue);
+          
+          // Opzionale: disabilita l'input o mostra un loader per feedback visivo
+          google.script.run.withSuccessHandler(function(res) {
+              alert("Alunni aggiornati correttamente!");
+            }).withFailureHandler(function(err) {
+              alert("Errore durante l'aggiornamento: " + err);
+            }).adminUpdateSeatsAlunni(key,newValue); // Chiamata al backend
+        }
+*/
+
+        function displayPropertiesUtenti(dataArray) {
+    var tableHTML = '<h3>Pannello Webmaster: Proprietà (senza digit finali)</h3>';
+  tableHTML += '<table>';
+  tableHTML += '<thead><tr>';
+  tableHTML += '<th>Key</th>';
+  tableHTML += '<th>Value</th>';
+  tableHTML += '<th>Azione</th>';
+  tableHTML += '</tr></thead><tbody>';
+
+  if (!dataArray || dataArray.length === 0) {
+    tableHTML += '<tr><td colspan="3" style="text-align:center;">Nessuna proprietà trovata.</td></tr>';
+  } else {
+    // Ora cicliamo l'array di oggetti {chiave: "...", valore: "..."}
+    dataArray.forEach(function(item) {
+      var safeKey = item.chiave.replace(/'/g, "\\'"); // Evita errori con gli apici nel nome
+      
+      if (item.chiave=="AAA_Manutenzione")
+      {}
+      else{
+          tableHTML += '<tr id="row_' + item.chiave + '">';
+          tableHTML += '<td><b>' + item.chiave + '</b></td>';
+          tableHTML += '<td><textarea rows="2" style="width: 100%; box-sizing: border-box;">' + item.valore + '</textarea></td>';
+          tableHTML += '<td style="text-align:center;">';
+          tableHTML += '<button onclick="deleteProperty(\'' + safeKey + '\')" style="background-color: #dc3545; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer;">✖ Cancella</button>';
+          tableHTML += '</td></tr>';
+      }
+
+      
+    });
+  }
+
+  tableHTML += '</tbody></table>';
+  document.getElementById('webmaster2').innerHTML = tableHTML;
+}
+
+function deleteProperty(key) {
+  if (confirm("Sei sicuro di voler cancellare definitivamente la proprietà:\n" + key + " ?")) {
+    
+    // Effetto visivo di attesa
+    var row = document.getElementById("row_" + key);
+    if (row) row.style.opacity = "0.5";
+
+    google.script.run
+      .withSuccessHandler(function(response) {
+        // Se va a buon fine, rimuovi la riga dall'HTML
+        if (row) row.remove();
+        console.log(response);
+      })
+      .withFailureHandler(function(err) {
+        alert("Errore durante l'eliminazione: " + err);
+        if (row) row.style.opacity = "1"; // Ripristina la visuale se fallisce
+      })
+      .rimuoviProprieta(key); // Chiama il backend
+  }
+}
+
+
+    </script>
+</body>
+</html>
